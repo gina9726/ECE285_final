@@ -1,0 +1,6 @@
+N=82575, d=5, p=16515
+0 ~ 16515 are saved to img_fc7_train_part1.npy
+16515 ~ 33030 are saved to img_fc7_train_part2.npy
+33030 ~ 49545 are saved to img_fc7_train_part3.npy
+49545 ~ 66060 are saved to img_fc7_train_part4.npy
+66060 ~ 82575 are saved to img_fc7_train_part5.npy
