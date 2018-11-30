@@ -1,12 +1,12 @@
 import torch
 from torch import nn
-import torch.nn.functional as F
+import pdb
 
 class vqaModel(nn.Module):
     def __init__(self, dict_size, ques_emb_size, rnn_hidden_size, img_feat_dim, emb_size, output_size):
         super(vqaModel, self).__init__()
 
-        self.ques_emb = nn.Embedding(dict_size, ques_emb_size)
+        self.ques_emb = nn.Embedding(dict_size, ques_emb_size, padding_idx=0)
 
         self.rnn = nn.LSTM(
             input_size=ques_emb_size,
@@ -15,7 +15,7 @@ class vqaModel(nn.Module):
             batch_first=True,
             dropout=0.5
         )
-        
+
         self.state_dp = nn.Dropout(p=0.5)
         self.state_emb = nn.Linear(rnn_hidden_size, emb_size)
 
@@ -28,19 +28,20 @@ class vqaModel(nn.Module):
 
     def forward(self, img_feat, ques, ques_mask):
         # question embedding lookup
-        ques_emb = F.tanh(self.ques_emb(ques))
+        ques_emb = torch.tanh(self.ques_emb(ques))
 
         # rnn: encode questions
         # ques_shape = (batch, time_step, input_size)
         r_out, (h_n, h_c) = self.rnn(ques_emb, None)
+        ques_mask.unsqueeze_(-1)
         state = torch.sum(torch.mul(r_out, ques_mask), dim=1)
 
         # multimodal fusion (question and image)
         state_dp = self.state_dp(state)
-        state_emb = F.tanh(self.state_emb(state_dp))
+        state_emb = torch.tanh(self.state_emb(state_dp))
 
         img_dp = self.img_dp(img_feat)
-        img_emb = F.tanh(self.img_emb(img_dp))
+        img_emb = torch.tanh(self.img_emb(img_dp))
 
         score_dp = self.score_dp(torch.mul(state_emb, img_emb))
         output = self.score_emb(score_dp)
