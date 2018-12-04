@@ -1,4 +1,5 @@
 import torch
+from torch.autograd import Variable
 from torch import nn
 import pdb
 
@@ -8,6 +9,7 @@ class vqaModel(nn.Module):
 
         self.ques_emb = nn.Embedding(dict_size, ques_emb_size, padding_idx=0)
 
+        self.rnn_hidden_size = rnn_hidden_size
         self.rnn = nn.LSTM(
             input_size=ques_emb_size,
             hidden_size=rnn_hidden_size,
@@ -17,24 +19,30 @@ class vqaModel(nn.Module):
         )
 
         self.state_dp = nn.Dropout(p=0.5)
-        self.state_emb = nn.Linear(rnn_hidden_size, emb_size)
+        self.state_emb = nn.Linear(4 * rnn_hidden_size, emb_size)
 
         self.img_dp = nn.Dropout(p=0.5)
         self.img_emb = nn.Linear(img_feat_dim, emb_size)
 
-        self.score_dp = nn.Dropout(p=0.5)
-        self.score_emb = nn.Linear(emb_size, output_size)
+        self.score1_dp = nn.Dropout(p=0.5)
+        self.score1_emb = nn.Linear(emb_size, output_size)
 
+        self.score2_dp = nn.Dropout(p=0.5)
+        self.score2_emb = nn.Linear(output_size, output_size)
 
-    def forward(self, img_feat, ques, ques_mask):
+    def forward(self, img_feat, ques):
         # question embedding lookup
         ques_emb = torch.tanh(self.ques_emb(ques))
 
+        batch_size = img_feat.size(0)
+        h_0 = Variable(torch.zeros([2, batch_size, self.rnn_hidden_size])).cuda()
+        c_0 = Variable(torch.zeros([2, batch_size, self.rnn_hidden_size])).cuda()
+
         # rnn: encode questions
-        # ques_shape = (batch, time_step, input_size)
-        r_out, (h_n, h_c) = self.rnn(ques_emb, None)
-        ques_mask.unsqueeze_(-1)
-        state = torch.sum(torch.mul(r_out, ques_mask), dim=1)
+        r_out, (h_n, h_c) = self.rnn(ques_emb, (h_0, c_0))
+        h_nf = h_n.permute(1, 0, 2).contiguous().view(-1, 2 * self.rnn_hidden_size)
+        h_cf = h_c.permute(1, 0, 2).contiguous().view(-1, 2 * self.rnn_hidden_size)
+        state = torch.cat([h_nf, h_cf], dim=1)
 
         # multimodal fusion (question and image)
         state_dp = self.state_dp(state)
@@ -43,8 +51,11 @@ class vqaModel(nn.Module):
         img_dp = self.img_dp(img_feat)
         img_emb = torch.tanh(self.img_emb(img_dp))
 
-        score_dp = self.score_dp(torch.mul(state_emb, img_emb))
-        output = self.score_emb(score_dp)
+        score1_dp = self.score1_dp(torch.mul(state_emb, img_emb))
+        score1_emb = torch.tanh(self.score1_emb(score1_dp))
+
+        score2_dp = self.score2_dp(score1_emb)
+        output = self.score2_emb(score2_dp)
 
         return output
 

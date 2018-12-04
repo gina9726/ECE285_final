@@ -17,14 +17,16 @@ class vqaDataset(Dataset):
 
         with h5py.File(dataset['questions'], 'r') as hf:
             temp = hf.get('ques_length_%s' % phase)
-            self.len_ques = np.array(temp)
+            self.len_ques = np.array(temp).astype(np.int64)
 
             temp = hf.get('ques_%s' % phase)
-            self.question = np.array(temp).astype(np.int64)
-            self.max_len = self.question.shape[1]
-            self.ques_mask = np.zeros([len(self.question), self.max_len])
-            index = np.linspace(0, len(self.question)-1, len(self.question)).astype(np.int64)
-            self.ques_mask[index, self.len_ques-1] = 1
+            question = np.array(temp).astype(np.int64)
+            self.max_len = question.shape[1]
+            # right align questions
+            N = len(self.len_ques)
+            self.question = np.zeros([N, self.max_len])
+            for i in range(N):
+                self.question[i][-self.len_ques[i]:] = question[i][:self.len_ques[i]]
 
             temp = hf.get('img_pos_%s' % phase)
             self.img_list = np.array(temp)
@@ -48,10 +50,9 @@ class vqaDataset(Dataset):
     def __getitem__(self, index):
         img_feat = self.img_feat[self.img_list[index]]
         ques = self.question[index]
-        ques_mask = self.ques_mask[index]
         ques_ix = self.ques_ix[index]
         ans = self.answer[index]
-        return img_feat, ques, ques_mask, ques_ix, ans
+        return img_feat, ques, ques_ix, ans
 
     def __len__(self):
         return len(self.question)
