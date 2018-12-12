@@ -16,17 +16,17 @@ with open(sys.argv[1]) as f:
         elif 'current lr' in line:
             lr.append(float(line.rstrip('\n').split('= ')[1]))
 
-#lr = np.asarray(lr)
+lr = np.asarray(lr)
 closs = np.asarray(closs)
 acc = np.asarray(acc)
 
-ep = np.arange(len(closs))
+ep = np.arange(len(closs))*50
 plt.switch_backend('agg')
 fig = plt.figure()
 
-plt.plot(ep, closs, 'b', label='closs')
-plt.plot(ep, acc, 'r', label='accuracy')
-#plt.plot(ep, lr*1000, 'g', label='lr')
+plt.plot(ep, closs/max(closs), 'b', label='closs')
+plt.plot(ep, acc/100, 'r', label='accuracy')
+plt.plot(ep, lr*1000, 'g', label='lr')
 
 plt.legend(loc='upper left')
 plt.xlabel('Epoch')

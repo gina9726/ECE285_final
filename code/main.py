@@ -35,8 +35,8 @@ dataset['questions'] = '/home/gina/mlip/ECE285_final/data/data_prepro.h5'
 dataset['img_feat'] = '/home/gina/mlip/data/data_img_fc7.h5'
 # learning
 base_lr = 0.0003
-epoch = 15001
-batch_size = 500
+epoch = 60001
+batch_size = 300
 disp_ep = 50
 save_ep = 1000
 # model
@@ -82,7 +82,6 @@ def train(model_path='', param_only=False):
     ).cuda()
 
     optimizer = torch.optim.Adam(vqa.parameters(), lr=lr)
-    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=500, gamma=0.99)
 
     # restore model parameters (and optimizer states)
     start_ep = 0
@@ -94,7 +93,10 @@ def train(model_path='', param_only=False):
             start_ep = checkpoint['epoch']
             optimizer.load_state_dict(checkpoint['opt_state'])
             lr = checkpoint['opt_state']['param_groups'][0]['lr']
+            optimizer.param_groups[0].update({'initial_lr': lr})
     print('Start training from epoch-{}, base_lr={}'.format(start_ep, lr))
+
+    scheduler = torch.optim.lr_scheduler.StepLR(optimizer, step_size=500, gamma=0.99)
 
     for ep in range(start_ep, epoch):
         for step, value in enumerate(train_loader):
@@ -159,27 +161,17 @@ def test(model_path='checkpoint/tmp/ep-0.pt', dset='test'):
     print('Testing model: {}'.format(model_path))
 
     result = []
-    correct = 0
     for step, value in enumerate(test_loader):
         batch_imfeat = Variable(value[0].type(dtype), requires_grad=False).cuda()
         batch_ques = Variable(value[1].type(torch.LongTensor), requires_grad=False).cuda()
         batch_ques_ix = value[2].numpy()
-        batch_ans = value[3].numpy()
 
         output = vqa(batch_imfeat, batch_ques)
         pred = torch.max(output, dim=1)[1].cpu().data.numpy()
-        correct += np.equal(pred, batch_ans).sum()
 
         for i in xrange(len(pred)):
             ans = dset_test.ix_to_ans[str(pred[i]+1)]
-            if(batch_ques_ix[i] == 0):
-                continue
             result.append({u'answer': ans, u'question_id': str(batch_ques_ix[i])})
-
-        print('-----------------------------------------')
-        print('Batch: {}'.format(step))
-        print('Current accuracy: %.2f' % (float(correct)/((step+1)*batch_size)*100)+'%')
-        print('-----------------------------------------')
 
     print('Testing done.')
     my_list = list(result)
