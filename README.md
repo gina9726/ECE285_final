@@ -1,6 +1,16 @@
 # ECE285_final
 ECE 285 final project
 
+## Summary
+
+### Requirements
+The code is written in Python 2 and requires pytorch(0.3.0).
+check pytorch version:
+````
+import torch
+print(torch.__version__)
+````
+Notice: using pytorch 0.3.1 with cuda 9 will cause error.
 ## VQA: Visual Question Answering
 *prepro.py* is to preprocess training and testing question-image-answer pairs. It builds a dictionary (*word_to_ix.json*) of the words in questions, and encodes each word to a index. Also, it maps each answer into an index (the mapping is stored in *ix_to_ans.json*).
 
@@ -33,6 +43,12 @@ The file is too large we split it into several npy files.
 66060 ~ 82575 are saved to img_fc7_train_part5.npy
 testing image features are saved to img_fc7_test.npy
 
+### Extract Image
+To get the image feature:
+````
+python prepro_img.py
+````
+Here we use caffe to extract fc7 feature from vgg19 CNN model. After feature Extraction, we label those image into two label: unique-img-train and unique-img test.
 ### Training and Testing
 ```
 $ python main.py --lr ${learning rate} --phase ${'train', 'valid' or 'test'} --model ${model_name} --save_model ${model_name} &> logs/${model_name}.log
@@ -42,6 +58,16 @@ $ python main.py --lr ${learning rate} --phase ${'train', 'valid' or 'test'} --m
 > --model: start with the chosen model(skip this if train for the first time)
 > --save_model: save the model as model name
 ```
-#### Requirements
+you can also run .sh file to train or test the code:
+````
+chmod +x ${train.sh, valid.sh, test.sh}
+./${train.sh, valid.sh, test.sh}
+````
+### Draw learning rate and accuracy curve
+````
+python draw_curve.py logs/${your doc. name}.log
+````
+### Evaluation
+An evaluation code is inside Evaluation file. Simply input an image and ask a question, it will provide an answer.
+Needed datasets: word_to_id.json, data_prepro.json, data_prepro.h5, data_img_fc7.h5, path of trained model, input question and image.
 
-The code is written in Python 2 and requires pytorch(0.3.0).
