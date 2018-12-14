@@ -34,7 +34,8 @@ The file is too large we split it into several npy files.
 testing image features are saved to img_fc7_test.npy
 
 ### Training and Testing
-$ python main.py --lr ${learning rate} --phase ${'train', 'valid' or 'test'} --model ${model_name} --save_model ${model_name} &> logs/${model_name}.log
+* $ python main.py --lr ${learning rate} --phase ${'train', 'valid' or 'test'} --model ${model_name} --save_model ${model_name} &> logs/${model_name}.log
+
 --lr: starting learning rate
 --phase: choose which phase(training, testing or validation)
 --model: start with the chosen model
