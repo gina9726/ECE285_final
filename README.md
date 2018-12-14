@@ -41,3 +41,7 @@ $ python main.py --lr ${learning rate} --phase ${'train', 'valid' or 'test'} --m
 > --phase: choose which phase(training, testing or validation)
 > --model: start with the chosen model(skip this if train for the first time)
 > --save_model: save the model as model name
+```
+#### Requirements
+
+The code is written in Python 2 and requires pytorch(0.3.0).
