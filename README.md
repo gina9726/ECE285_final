@@ -32,3 +32,10 @@ The file is too large we split it into several npy files.
 49545 ~ 66060 are saved to img_fc7_train_part4.npy
 66060 ~ 82575 are saved to img_fc7_train_part5.npy
 testing image features are saved to img_fc7_test.npy
+
+### Training and Testing
+$ python main.py --lr ${learning rate} --phase ${'train', 'valid' or 'test'} --model ${model_name} --save_model ${model_name} &> logs/${model_name}.log
+--lr: starting learning rate
+--phase: choose which phase(training, testing or validation)
+--model: start with the chosen model
+--save_model: save the model as model name
