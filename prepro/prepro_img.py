@@ -9,7 +9,7 @@ from progress.bar import Bar
 [IMG_HEIGHT, IMG_WIDTH] = [224, 224]
 
 input_json = 'data_prepro.json'
-image_root = '/gpu2_data/gina/data/COCO'
+image_root = '/path/to/data/COCO'
 # vgg19
 cnn_proto = 'vgg19/vgg19_deploy_batch40.prototxt'
 cnn_model = 'vgg19/VGG_ILSVRC_19_layers.caffemodel'
@@ -21,7 +21,6 @@ def extract_feat(imlist, dname):
     dataLen = len(imlist)
     bar = Bar('Processing {}'.format(dname), max=dataLen/batch_size+1)
     # vgg19
-    #f.create_dataset(dname, (dataLen, 512, 7, 7), dtype='f4') # pool5
     f.create_dataset(dname, (dataLen, 4096), dtype='f4') # fc7
     batch = zip(range(0, dataLen, batch_size), range(batch_size, dataLen+1, batch_size))
     batch.append(((dataLen//batch_size)*batch_size, dataLen))
@@ -36,7 +35,6 @@ def extract_feat(imlist, dname):
         net.blobs['data'].data[:] = batch_image
         net.forward()
         # vgg19
-        #batch_feat = net.blobs['pool5'].data[...].copy()
         batch_feat = net.blobs['fc7'].data[...].copy()
         f[dname][start:end] = batch_feat[:end-start, ...]
         bar.next()
