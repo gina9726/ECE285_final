@@ -56,7 +56,8 @@ $ python main.py --lr ${learning rate} --phase ${'train', 'valid' or 'test'} --m
 > --lr: starting learning rate
 > --phase: choose which phase(training, testing or validation)
 > --model: start with the chosen model(skip this if train for the first time)
-> --param_only: False to restore both params and opt states and True to restore only params
+> --param_only: False to restore both params and opt states
+                True to restore only params
 > --save_model: save the model as model name
 
 ```
