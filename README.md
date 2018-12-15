@@ -72,3 +72,6 @@ python draw_curve.py logs/${your doc. name}.log
 * An evaluation code is inside Evaluation file. Simply input an image and ask a question, it will provide an answer.
 * Needed datasets: word_to_id.json, data_prepro.json, data_prepro.h5, data_img_fc7.h5, path of trained model, input question and image.
 
+### Reference
+* Code for preprocess data is based on [VQA_LSTM_CNN](https://github.com/GT-Vision-Lab/VQA_LSTM_CNN?fbclid=IwAR0c5Cc-WPUi92KO_mTEAvc9XP1Bo_1Lcf1JuRPgGGmnfQkoorF6SWcZVEE)
+ 
