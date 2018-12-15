@@ -1,8 +1,6 @@
 # ECE285_final
 ECE 285 final project
 
-## Summary
-
 ### Requirements
 The code is written in Python 2 and requires pytorch(0.3.0).
 check pytorch version:
@@ -71,6 +69,6 @@ chmod +x ${train.sh, valid.sh, test.sh}
 python draw_curve.py logs/${your doc. name}.log
 ````
 ### Evaluation
-An evaluation code is inside Evaluation file. Simply input an image and ask a question, it will provide an answer.
-Needed datasets: word_to_id.json, data_prepro.json, data_prepro.h5, data_img_fc7.h5, path of trained model, input question and image.
+* An evaluation code is inside Evaluation file. Simply input an image and ask a question, it will provide an answer.
+* Needed datasets: word_to_id.json, data_prepro.json, data_prepro.h5, data_img_fc7.h5, path of trained model, input question and image.
 
