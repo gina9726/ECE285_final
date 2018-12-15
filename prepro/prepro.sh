@@ -1,4 +1,4 @@
-DATA_PATH="/gpu2_data/gina/data"
+DATA_PATH="/path/to/data"
 TRAIN_JSON=${DATA_PATH}/vqa_raw_train.json
 TEST_JSON=${DATA_PATH}/vqa_raw_test.json
 NUM_ANS=1000
