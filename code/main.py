@@ -30,9 +30,9 @@ print(args)
 ### config
 # data
 dataset = {}
-dataset['data_info'] = '/home/gina/mlip/ECE285_final/data/data_prepro.json'
-dataset['questions'] = '/home/gina/mlip/ECE285_final/data/data_prepro.h5'
-dataset['img_feat'] = '/home/gina/mlip/data/data_img_fc7.h5'
+dataset['data_info'] = '../data/data_prepro.json'
+dataset['questions'] = '../data/data_prepro.h5'
+dataset['img_feat'] = '/path/to/data_img_fc7.h5'
 # learning
 base_lr = 0.0003
 epoch = 60001
@@ -70,7 +70,6 @@ def train(model_path='', param_only=False):
     dset_train = vqaDataset(dataset, 'train')
     sampler = SubsetRandomSampler(list(range(0, dset_train.__len__())))
     train_loader = DataLoader(dataset=dset_train, batch_size=batch_size, sampler=sampler, shuffle=False)
-    #train_loader = DataLoader(dataset=dset_train, batch_size=batch_size, shuffle=True)
 
     vqa = vqaModel(
         dset_train.dict_size,
