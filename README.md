@@ -61,6 +61,8 @@ you can also run .sh file to train or test the code:
 chmod +x ${train.sh, valid.sh, test.sh}
 ./${train.sh, valid.sh, test.sh}
 ````
+Note that the code of our modified version of model is named with "_mask".
+
 ### Draw learning rate and accuracy curve
 ````
 python draw_curve.py logs/${your doc. name}.log
