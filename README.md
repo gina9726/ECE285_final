@@ -10,6 +10,10 @@ print(torch.__version__)
 ````
 Notice: using pytorch 0.3.1 with cuda 9 will cause error.
 ## VQA: Visual Question Answering
+### Data Preprocessing (from [VQA_LSTM_CNN](https://github.com/GT-Vision-Lab/VQA_LSTM_CNN))
+```
+$ ./prepro.sh
+```
 *prepro.py* is to preprocess training and testing question-image-answer pairs. It builds a dictionary (*word_to_ix.json*) of the words in questions, and encodes each word to a index. Also, it maps each answer into an index (the mapping is stored in *ix_to_ans.json*).
 
 *prepro.sh* is just a script for running prepro.py.
@@ -28,25 +32,18 @@ To know the content and the format of each field, please refer to the code and c
  - "ix_to_word", "ix_to_ans"
  - "unique_img_train", "unique_img_test"
 ----------------------------------------------
+### Extract Image (from [san-vqa-tensorflow](https://github.com/TingAnChien/san-vqa-tensorflow))
+To get the image feature:
+````
+python prepro_img.py
+````
+Here we use caffe to extract fc7 feature from vgg19 CNN model. After feature Extraction, we save those image into two sets: unique-img-train and unique-img test.
+
 *prepro_img.py* extracts image features into features. Here we use *caffe* to extract fc7 feature from vgg19 CNN model.
 
 outputfile:
 * data_img_fc7.h5: fc7 features extracted from vgg19.
 
-The file is too large we split it into several npy files.
-0 ~ 16515 are saved to img_fc7_train_part1.npy
-16515 ~ 33030 are saved to img_fc7_train_part2.npy
-33030 ~ 49545 are saved to img_fc7_train_part3.npy
-49545 ~ 66060 are saved to img_fc7_train_part4.npy
-66060 ~ 82575 are saved to img_fc7_train_part5.npy
-testing image features are saved to img_fc7_test.npy
-
-### Extract Image
-To get the image feature:
-````
-python prepro_img.py
-````
-Here we use caffe to extract fc7 feature from vgg19 CNN model. After feature Extraction, we label those image into two label: unique-img-train and unique-img test.
 ### Training and Testing
 ```
 $ python main.py --lr ${learning rate} --phase ${'train', 'valid' or 'test'} --model ${model_name} --save_model ${model_name} &> logs/${model_name}.log
@@ -68,11 +65,7 @@ chmod +x ${train.sh, valid.sh, test.sh}
 ````
 python draw_curve.py logs/${your doc. name}.log
 ````
-### Evaluation
+### Evaluation (from [VQA](https://github.com/GT-Vision-Lab/VQA?fbclid=IwAR2xhKtJ7-J5G6NdKwATm3yT_b64rZuN13xGoj7UKRkGDoqel3a22aSEghs))
 * An evaluation code is inside Evaluation file. Simply input an image and ask a question, it will provide an answer.
 * Needed datasets: word_to_id.json, data_prepro.json, data_prepro.h5, data_img_fc7.h5, path of trained model, input question and image.
-
-### Reference
-* Code for preprocess data is based on [VQA_LSTM_CNN](https://github.com/GT-Vision-Lab/VQA_LSTM_CNN?fbclid=IwAR0c5Cc-WPUi92KO_mTEAvc9XP1Bo_1Lcf1JuRPgGGmnfQkoorF6SWcZVEE)
-* Code for evaluation is based on [VQA](https://github.com/GT-Vision-Lab/VQA?fbclid=IwAR2xhKtJ7-J5G6NdKwATm3yT_b64rZuN13xGoj7UKRkGDoqel3a22aSEghs)
  
