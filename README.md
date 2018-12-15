@@ -74,4 +74,5 @@ python draw_curve.py logs/${your doc. name}.log
 
 ### Reference
 * Code for preprocess data is based on [VQA_LSTM_CNN](https://github.com/GT-Vision-Lab/VQA_LSTM_CNN?fbclid=IwAR0c5Cc-WPUi92KO_mTEAvc9XP1Bo_1Lcf1JuRPgGGmnfQkoorF6SWcZVEE)
+* Code for evaluation is based on [VQA](https://github.com/GT-Vision-Lab/VQA?fbclid=IwAR2xhKtJ7-J5G6NdKwATm3yT_b64rZuN13xGoj7UKRkGDoqel3a22aSEghs)
  
